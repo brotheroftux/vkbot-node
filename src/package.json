@@ -1,0 +1,26 @@
+{
+  "name": "vkbot-node",
+  "version": "1.0.0",
+  "description": "A simple API node.js module designed to ease the creation of VK.com bots.",
+  "main": "vkbot.js",
+  "scripts": {
+    "test": "node ../test/bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brotheroftux/vkbot-node.git"
+  },
+  "keywords": [
+    "vkapi",
+    "bot"
+  ],
+  "author": "brotheroftux (Daniel Kuznetsov)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brotheroftux/vkbot-node/issues"
+  },
+  "homepage": "https://github.com/brotheroftux/vkbot-node#readme",
+  "dependencies": {
+    "request": "^2.74.0"
+  }
+}
