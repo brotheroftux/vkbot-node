@@ -155,7 +155,7 @@ var vkbot = (() => {
       var args = incmessage.body.split(' ');
       var name = args[1];
       args.splice(0,2);
-      if (typeof this.commands[name].callback === 'undefined') // if we don't have a route for the command
+      if (typeof this.commands[name] === 'undefined') // if we don't have a route for the command
         return console.warn('No available route for \'' + name + '\', skipping.'); // WHY BOTHER, SEE YA
       try {
         // we expect some errors from the user callback but we don't want them to crash the whole app
