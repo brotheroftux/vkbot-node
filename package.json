@@ -4,7 +4,7 @@
   "description": "A simple API node.js module designed to ease the creation of VK.com bots.",
   "main": "vkbot.js",
   "scripts": {
-    "test": "node ../test/bot.js"
+    "start": "node ./test/bot.js"
   },
   "repository": {
     "type": "git",

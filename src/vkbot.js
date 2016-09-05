@@ -1,24 +1,42 @@
+"use strict";
 var vkbot = (() => {
 
-  var BotCommand = require('./classes/BotCommand');
+  var BotCommand = require('./Classes/BotCommand');
   var request = require('request');
   var querystring = require('querystring');
 
-  function parseMessages(token, bot_prefix, callback, that) {
-    request('https://api.vk.com/method/messages.get?' + querystring.stringify({count: 20, time_offset: 1, v: '5.53', access_token: token}), (err, resp, body) => {
+
+  function parseMessages(token, bot_prefix, callback, that, timestamp) {
+    request('https://api.vk.com/method/messages.get?' + querystring.stringify({count: 20,
+      time_offset: 1,
+      v: '5.53',
+      access_token: token}),
+    (err, resp, body) => {
       if (!err) {
+        if (JSON.parse(body).hasOwnProperty('error')) {
+          setTimeout(parseMessages, 1000, token, bot_prefix, callback, that, (new Date).getTime() / 1000);
+          return console.warn('API error.')
+        }
         var messages = JSON.parse(body).response.items;
-        messages.forEach((message) => {
-          if ((new RegExp('^' + bot_prefix)).test(message.body)) { console.log("Captured a message for bot."); callback.call(that, message); }
-        });
+        var stamp = (new Date).getTime() / 1000;
+        for (var i in messages){
+          if ((new RegExp('^' + bot_prefix)).test(messages[i].body) && (messages[i].date > timestamp)) {
+            console.log("Captured a message for bot.");
+            callback.call(that, messages[i]);
+            stamp = (messages[i].date > stamp) ? messages[i].date : stamp;
+          } else {
+            stamp = (new Date).getTime() / 1000;
+          }
+        }
+        setTimeout(parseMessages, 1000, token, bot_prefix, callback, that, stamp);
       }
     });
-    setTimeout(parseMessages, 1003, token, bot_prefix, callback, that);
+
   }
 
   class VkBotAPI {
 
-    constructor(token, bot_prefix = 'samplebot') {
+    constructor(token, bot_prefix) {
       if (typeof token === 'undefined') throw new Error('No access token specified.');
       this.token = token;
       this.bot_prefix = bot_prefix;
@@ -32,7 +50,7 @@ var vkbot = (() => {
     }
 
     listen() {
-      parseMessages(this.token, this.bot_prefix, this.route, this);
+      parseMessages(this.token, this.bot_prefix, this.route, this, (new Date).getTime() / 1000);
     }
 
     route(incmessage) {
@@ -54,7 +72,7 @@ var vkbot = (() => {
         forward_messages: incmessage.id,
         v: '5.53',
         access_token: this.token}),
-        (err, resp, body) => {
+      (err, resp, body) => {
           console.log(resp.body);
       });
     }
